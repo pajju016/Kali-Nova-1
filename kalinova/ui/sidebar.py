@@ -11,20 +11,54 @@ class Sidebar(QWidget):
 
         layout = QVBoxLayout()
 
-        sections = [
-            "Dashboard",
-            "Recon",
-            "Web Testing",
-            "Authentication",
-            "Network",
-            "Reports",
-            "Settings"
-        ]
+        # -----------------------
+        # Dashboard
+        # -----------------------
+        self.dashboard_btn = QPushButton("Dashboard")
+        self.dashboard_btn.clicked.connect(
+            lambda: self.navigate.emit("Dashboard")
+        )
+        layout.addWidget(self.dashboard_btn)
 
-        for section in sections:
-            btn = QPushButton(section)
-            btn.clicked.connect(lambda checked, s=section: self.navigate.emit(s))
-            layout.addWidget(btn)
+        # -----------------------
+        # Recon
+        # -----------------------
+        self.recon_btn = QPushButton("Recon")
+        self.recon_btn.clicked.connect(
+            lambda: self.navigate.emit("Recon")
+        )
+        layout.addWidget(self.recon_btn)
+
+        # -----------------------
+        # Web Testing
+        # -----------------------
+        self.web_btn = QPushButton("Web Testing")
+        self.web_btn.clicked.connect(
+            lambda: self.navigate.emit("Web")
+        )
+        layout.addWidget(self.web_btn)
+
+        # -----------------------
+        # Future Categories (Placeholders)
+        # -----------------------
+        self.auth_btn = QPushButton("Authentication")
+        self.auth_btn.clicked.connect(
+            lambda: self.navigate.emit("Auth")
+        )
+        layout.addWidget(self.auth_btn)
+
+        self.network_btn = QPushButton("Network")
+        self.network_btn.clicked.connect(
+            lambda: self.navigate.emit("Network")
+        )
+        layout.addWidget(self.network_btn)
+
+        self.reports_btn = QPushButton("Reports")
+        self.reports_btn.clicked.connect(
+            lambda: self.navigate.emit("Reports")
+        )
+        layout.addWidget(self.reports_btn)
 
         layout.addStretch()
+
         self.setLayout(layout)

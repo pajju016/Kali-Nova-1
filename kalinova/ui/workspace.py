@@ -17,7 +17,7 @@ class Workspace(QStackedWidget):
         self.pages = {
             "Dashboard": DashboardPage(),
             "Recon": ReconPage(),
-            "Web Testing": WebPage(),
+            "Web": WebPage(),
             "Authentication": AuthPage(),
             "Network": NetworkPage(),
             "Reports": ReportsPage(),
