@@ -18,7 +18,7 @@ class Workspace(QStackedWidget):
             "Dashboard": DashboardPage(),
             "Recon": ReconPage(),
             "Web": WebPage(),
-            "Authentication": AuthPage(),
+            "Auth": AuthPage(),
             "Network": NetworkPage(),
             "Reports": ReportsPage(),
             "Settings": SettingsPage(),

@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (
 )
 
 from ui.sidebar import Sidebar
+from ui.topbar import TopBar
 from ui.workspace import Workspace
 from ui.console import Console
 from core.executor import CommandThread
@@ -13,9 +14,13 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-
+        # Connect mode change to Recon page
+        self.topbar.mode_changed.connect(
+        self.workspace.pages["Recon"].update_mode)
         self.setWindowTitle("Kalinova OS")
         self.setGeometry(100, 100, 1300, 800)
+        self.topbar = TopBar()
+        main_layout.addWidget(self.topbar)
 
         # =========================
         # Central Layout
@@ -60,7 +65,13 @@ class MainWindow(QMainWindow):
         web = self.workspace.pages["Web"]
         web.run_command.connect(self.execute)
 
-        # (Future categories will connect here)
+        #Auth page
+        auth = self.workspace.pages["Auth"]
+        auth.run_command.connect(self.execute)
+
+        #network
+        network = self.workspace.pages["Network"]
+        network.run_command.connect(self.execute)
 
     # =========================
     # Command Execution

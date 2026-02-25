@@ -1,10 +1,12 @@
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QLabel, QComboBox
-from PyQt6.QtCore import QTimer
-
+from PyQt6.QtCore import pyqtSignal, QTimer
 from core.app_state import app_state
 
 
 class TopBar(QWidget):
+
+    mode_changed = pyqtSignal(str)
+
     def __init__(self):
         super().__init__()
 
@@ -14,11 +16,11 @@ class TopBar(QWidget):
         self.title.setStyleSheet("font-size:18px; font-weight:bold;")
 
         self.mode_selector = QComboBox()
-        self.mode_selector.addItems(["Beginner Mode", "Expert Mode"])
-        self.mode_selector.currentIndexChanged.connect(self.change_mode)
+        self.mode_selector.addItems(["Beginner", "Expert"])
+        self.mode_selector.currentTextChanged.connect(self.change_mode)
 
-        self.risk_label = QLabel("Global Risk: LOW")
-        self.risk_label.setStyleSheet("color: green; font-weight:bold;")
+        self.risk_label = QLabel("Risk: LOW")
+        self.risk_label.setStyleSheet("font-weight:bold;")
 
         layout.addWidget(self.title)
         layout.addStretch()
@@ -27,27 +29,35 @@ class TopBar(QWidget):
 
         self.setLayout(layout)
 
-        # Auto update risk display every 500ms
+        # Auto refresh risk display
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_risk_display)
         self.timer.start(500)
 
-    def change_mode(self):
-        selected = self.mode_selector.currentText()
+    # ========================
+    # Mode Change
+    # ========================
 
-        if "Beginner" in selected:
-            app_state.set_mode("Beginner")
-        else:
-            app_state.set_mode("Expert")
+    def change_mode(self, mode):
+        app_state.mode = mode
+        self.mode_changed.emit(mode)
+
+    # ========================
+    # Dynamic Risk Color
+    # ========================
 
     def update_risk_display(self):
+
         risk = app_state.global_risk
 
-        if risk == "HIGH":
-            self.risk_label.setStyleSheet("color: red; font-weight:bold;")
-        elif risk == "MEDIUM":
-            self.risk_label.setStyleSheet("color: orange; font-weight:bold;")
-        else:
-            self.risk_label.setStyleSheet("color: green; font-weight:bold;")
+        color = "green"
 
-        self.risk_label.setText(f"Global Risk: {risk}")
+        if risk == "MEDIUM":
+            color = "orange"
+        elif risk == "HIGH":
+            color = "red"
+
+        self.risk_label.setText(f"Risk: {risk}")
+        self.risk_label.setStyleSheet(
+            f"font-weight:bold; color:{color};"
+        )

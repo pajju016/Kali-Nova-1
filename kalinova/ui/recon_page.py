@@ -19,7 +19,6 @@ class ReconPage(QWidget):
         title = QLabel("Reconnaissance Tools")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title.setStyleSheet("font-size:22px; font-weight:bold;")
-
         layout.addWidget(title)
 
         # ========================
@@ -104,6 +103,29 @@ class ReconPage(QWidget):
 
         self.setLayout(layout)
 
+        # Apply current mode rules when page loads
+        self.update_mode(app_state.mode)
+
+    # ========================
+    # MODE UPDATE FUNCTION
+    # ========================
+
+    def update_mode(self, mode):
+        index = self.scan_type.findText("Aggressive Scan")
+
+        if index != -1:
+            item = self.scan_type.model().item(index)
+
+            if mode == "Beginner":
+                item.setEnabled(False)
+
+                # If currently selected, reset to safe option
+                if self.scan_type.currentText() == "Aggressive Scan":
+                    self.scan_type.setCurrentIndex(0)
+
+            else:
+                item.setEnabled(True)
+
     # ========================
     # NMAP COMMAND
     # ========================
@@ -115,9 +137,14 @@ class ReconPage(QWidget):
 
         app_state.reset_scan()
 
-        command = "nmap "
-
         scan = self.scan_type.currentText()
+
+        # Backend safety check
+        if scan == "Aggressive Scan" and app_state.mode == "Beginner":
+            print("Aggressive scan disabled in Beginner mode.")
+            return
+
+        command = "nmap "
 
         if scan == "Service Detection":
             command += "-sV "
