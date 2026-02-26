@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (
     QComboBox, QGroupBox, QFileDialog
 )
 from PyQt6.QtCore import Qt, pyqtSignal
+from core.app_state import app_state   # <-- moved to top (better practice)
 
 
 class WebPage(QWidget):
@@ -123,28 +124,27 @@ class WebPage(QWidget):
     # SQLMAP COMMAND
     # ========================
     def build_sqlmap(self):
-    from core.app_state import app_state
+        url = self.sqlmap_url.text().strip()
+        if not url:
+            return
 
-    url = self.sqlmap_url.text().strip()
-    if not url:
-        return
+        command = f"sqlmap -u \"{url}\""
 
-    command = f"sqlmap -u \"{url}\""
+        # Beginner Mode forces safe behavior
+        if app_state.mode == "Beginner":
+            command += " --batch --level=1"
+        else:
+            command += " --batch"
 
-    # Beginner Mode forces safe behavior
-    if app_state.mode == "Beginner":
-        command += " --batch --level=1"
-    else:
-        command += " --batch"
+            level = self.sqlmap_level.currentText()
 
-        level = self.sqlmap_level.currentText()
+            if "Level 3" in level:
+                command += " --level=3"
+            elif "Level 5" in level:
+                command += " --level=5"
 
-        if "Level 3" in level:
-            command += " --level=3"
-        elif "Level 5" in level:
-            command += " --level=5"
+        self.run_command.emit(command)
 
-    self.run_command.emit(command)
     # ========================
     # GOBUSTER COMMAND
     # ========================
